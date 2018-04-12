@@ -19,9 +19,10 @@ public class Server {
 			while(true) {
 				String expression = dis.readUTF();
 				System.out.println("Client: "+expression);
-				dos.writeUTF("I got the message from you!\n");
 
 				Postfix postfix = new Postfix(expression.trim());
+				String message = expression + " = " + postfix.getValue();
+				dos.writeUTF(message +"\n");
 
 				dos.flush();
 			}
@@ -68,13 +69,19 @@ public class Server {
 		public void printElements() {
 			setElements(this.expression);
 			for (String str : elements) {
-				System.out.println(str +" ");
+				System.out.print(str +" ");
 			}
 		}
 
 		public void printPostfix() {
 			setElements(expression);
-			setPostfix(elements);
+			if (postfix.size() == 0) {
+				setPostfix(elements);	
+			}
+
+			for (String element : postfix) {
+				System.out.print(element +" ");
+			}
 			
 		}
 
@@ -124,7 +131,7 @@ public class Server {
 		}
 
 		private int getPriority(String operator) {
-			int value = 2; // +, - are the same priority
+			int value = 2; // is the priority of + and - 
 			switch (operator) {
 				case "*": case "/": value = 3; break;
 				case "(": value = 1; break;
@@ -136,16 +143,16 @@ public class Server {
 		private String calculate(String value1, String value2, String operator) {
 			double val1 = Double.parseDouble(value1);
 			double val2 = Double.parseDouble(value2);
-			Double val = 0;
+			Double val = 0.0;
 
 			switch (operator) {
-				case "+": val = value1 + value2; break;
-				case "-": val = value1 - value2; break;
-				case "*": val = value1 * value2; break;
-				case "/": val = value1 / value2; break;
+				case "+": val = val1 + val2; break;
+				case "-": val = val1 - val2; break;
+				case "*": val = val1 * val2; break;
+				case "/": val = val1 / val2; break;
 			}
 
-			return val;
+			return val.toString();
 		}
 	}
 
